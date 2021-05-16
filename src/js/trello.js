@@ -1,7 +1,8 @@
 export default class Trello {
   constructor() {
     this.trelloBtnArr = document.querySelectorAll(".trello__btn");
-
+    this.trelloCell = null;
+    this.mouseoverTrelloCellBind = this.mouseoverTrelloCell.bind(this);
   }
 
   init() {
@@ -27,7 +28,7 @@ export default class Trello {
     });
 
     trelloCells.forEach((trelloCell) => {
-      trelloCell.addEventListener("mousedown", this.trelloEventMousedown);
+      trelloCell.addEventListener("mousedown", this.trelloEventMousedown.bind(this));
     });
   }
 
@@ -35,6 +36,7 @@ export default class Trello {
     const trello = document.querySelector(".trello");
     const trelloCell = event.target.parentNode;
     const trelloCells = document.querySelectorAll(".trello__cell");
+    this.trelloCell = trelloCell;
 
     event.preventDefault();
     if(trelloCell.classList.contains("trello__cell")) {
@@ -62,25 +64,32 @@ export default class Trello {
           const thisCell = e.target;
           const trelloColumn = thisCell.parentNode;
           trelloColumn.insertBefore(trelloCell, thisCell);
+
+          trelloCells.forEach((trelloCellTwo) => {
+            trelloCellTwo.removeEventListener("mouseover", this.mouseoverTrelloCellBind);
+          });
         }
       });
     });
 
-    function mouseoverTrelloCell(trelloCellTwo) {
-      trelloCellTwo.style.paddingTop = `${trelloCell.clientHeight}px`;
-    };
-
     trelloCells.forEach((trelloCellTwo) => {
-      trelloCellTwo.addEventListener("mouseover", mouseoverTrelloCell.bind(this, trelloCellTwo));
-    });
+      trelloCellTwo.addEventListener("mouseover", this.mouseoverTrelloCellBind);
 
-    trelloCells.forEach((trelloCell) => {
-      trelloCell.addEventListener("mouseout", function mouseoutTrelloCell(e) {
-        trelloCell.style.paddingTop = "0px";
-        trelloCell.removeEventListener("mouseover", mouseoverTrelloCell.bind(this, trelloCell));
+      trelloCellTwo.addEventListener("mouseout", function mouseoutTrelloCell(e) {
+        trelloCellTwo.style.paddingTop = "0px";
       })
     });
   }
+
+  mouseoverTrelloCell(e) {
+    let  target = e.target.parentNode;
+
+    if(target.classList.contains("trello__cell")) {
+      target.style.paddingTop = `${this.trelloCell.offsetHeight}px`;
+    } else if(e.target.classList.contains("trello__cell")) {
+      e.target.style.paddingTop = `${this.trelloCell.offsetHeight}px`;
+    }
+  };
 
   trelloCartMouseleave(e) {
     e.target

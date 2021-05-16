@@ -30,6 +30,7 @@
 }
 
 .dragget {
+  width: 300px;
   z-index: 999;
   position: absolute;
   pointer-events: none;
