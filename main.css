@@ -1,0 +1,72 @@
+.trello {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.trello__column {
+  box-sizing: border-box;
+  width: 32%;
+  border: 2px #000 solid;
+  border-radius: 5px;
+}
+
+.trello__btn {
+  margin: 1em 1em 1em 1em;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.trello__cart {
+  margin: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 2px #000 solid;
+  border-radius: 5px;
+}
+
+.dragget {
+  width: 300px;
+  z-index: 999;
+  position: absolute;
+  pointer-events: none;
+  cursor: grabbing;
+}
+
+.trello__text {
+  margin: 0;
+  padding: 1em;
+}
+
+.trello__close {
+  text-align: right;
+  width: 10px;
+  height: 10px;
+  padding: 0.3em 0.5em 0.2em 0.2em;
+  cursor: pointer;
+}
+
+.trello__close-opacity {
+  opacity: 0;
+}
+
+.trello__textarea {
+  display: block;
+  margin: 1em;
+  border: 2px #000 solid;
+  border-radius: 5px;
+  min-width: calc(100% - 20px - 1em);
+  max-width: calc(100% - 20px - 1em);
+  min-height: 70px;
+  max-height: 100px;
+}
+
+.trello__btn-active {
+  background-color: green;
+  color: aliceblue;
+  width: 100px;
+}
