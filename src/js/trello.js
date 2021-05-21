@@ -1,12 +1,14 @@
 export default class Trello {
   constructor() {
     this.trelloBtnArr = document.querySelectorAll(".trello__btn");
+    this.trello = document.querySelector('.trello');
     this.trelloCell = null;
+    this.body = document.querySelector('body');
     this.mouseoverTrelloCellBind = this.mouseoverTrelloCell.bind(this);
   }
 
   init() {
-    this.trelloBtnClick();
+    this.loadLocalStorage();
   }
 
   trelloCartEvent() {
@@ -32,9 +34,37 @@ export default class Trello {
     });
   }
 
+  loadLocalStorage(){
+    const trelloOne = localStorage.getItem('trelloOne');
+    const trelloTwo = localStorage.getItem('trelloTwo');
+    const trelloThree = localStorage.getItem('trelloThree');
+
+    if(trelloOne){
+      this.trello.innerHTML = '';
+      
+      this.trello.insertAdjacentHTML('beforeend', trelloOne);
+      this.trello.insertAdjacentHTML('beforeend', trelloTwo);
+      this.trello.insertAdjacentHTML('beforeend', trelloThree);
+      
+    }
+    this.trelloBtnArr = document.querySelectorAll(".trello__btn");
+      this.trelloBtnClick();
+      this.trelloCartEvent();
+  }
+
   trelloEventMousedown(event) {
+    let trelloCell = null;
+    if(event.target.parentNode.classList.contains("trello__cell")){
+      trelloCell = event.target.parentNode;
+    } else if(event.target.classList.contains("trello__cell")){
+      trelloCell = event.target;
+    } else if((event.target.parentNode.parentNode.classList.contains("trello__cell"))){
+      trelloCell = event.target.parentNode.parentNode;
+    }
+
+    this.body.style.cursor = "grabbing";
     const trello = document.querySelector(".trello");
-    const trelloCell = event.target.parentNode;
+    
     const trelloCells = document.querySelectorAll(".trello__cell");
     this.trelloCell = trelloCell;
 
@@ -42,24 +72,25 @@ export default class Trello {
     if(trelloCell.classList.contains("trello__cell")) {
       trelloCell.classList.add("dragget");
     }
-    
 
     trello.addEventListener("mousemove", function panelDrag(event) {
       if (trelloCell.classList.contains("trello__cell")) {
+        
         trelloCell.style.left = `${event.clientX}px`;
-        trelloCell.style.top = `${event.clientY}px`;
+        trelloCell.style.top = `${event.clientY}px`; 
       }
     });
 
     trello.addEventListener("mouseup", function panelDragEnd() {
       if (!trelloCell) return;
-
       trelloCell.classList.remove("dragget");
       trello.removeEventListener("mouseup", panelDragEnd);
-    });
+      this.saveLocalStorage();
+    }.bind(this));
 
     trelloCells.forEach((trelloCellOne) => {
       trelloCellOne.addEventListener("mouseup", (e) => {
+        this.body.style.cursor = "default";
         if(e.target.classList.contains("trello__cell")) {
           const thisCell = e.target;
           const trelloColumn = thisCell.parentNode;
@@ -68,6 +99,7 @@ export default class Trello {
           trelloCells.forEach((trelloCellTwo) => {
             trelloCellTwo.removeEventListener("mouseover", this.mouseoverTrelloCellBind);
           });
+          this.saveLocalStorage();
         }
       });
     });
@@ -113,6 +145,7 @@ export default class Trello {
     trelloCloseArr.forEach((trelloClose) => {
       trelloClose.addEventListener("click", this.trelloCloseClick);
     });
+
   }
 
   trelloCloseClick(e) {
@@ -143,6 +176,7 @@ export default class Trello {
             trelloTextarea[0].remove();
             trelloBtn.classList.remove("trello__btn-active");
             trelloBtn.textContent = "+ Add another card";
+            this.saveLocalStorage();
           }
         } else {
           trelloBtn.insertAdjacentHTML(
@@ -151,8 +185,17 @@ export default class Trello {
           );
           trelloBtn.classList.add("trello__btn-active");
           trelloBtn.textContent = "Add Card";
+          this.saveLocalStorage();
         }
       });
     });
+  }
+
+  saveLocalStorage() {
+    const trelloColumn = document.querySelectorAll('.trello__column');
+
+    localStorage.setItem('trelloOne', trelloColumn[0].outerHTML);
+    localStorage.setItem('trelloTwo', trelloColumn[1].outerHTML);
+    localStorage.setItem('trelloThree', trelloColumn[2].outerHTML);
   }
 }
